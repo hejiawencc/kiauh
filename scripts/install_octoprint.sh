@@ -49,6 +49,7 @@ octoprint_dependencies(){
     wget
     python-pip
     python-dev
+    python3-dev
     libyaml-dev
     build-essential
     python-setuptools
