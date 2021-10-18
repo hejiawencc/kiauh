@@ -21,9 +21,11 @@ update_ui(){
   echo -e "|  Other:                |---------------|--------------| "
   echo -e "|  6) [DWC2-for-Klipper] |  $LOCAL_DWC2FK_COMMIT | $REMOTE_DWC2FK_COMMIT | "
   echo -e "|  7) [DWC2 Web UI]      |  $DWC2_LOCAL_VER | $DWC2_REMOTE_VER | "
+  echo -e "|  8) [PrettyGCode]      |  $LOCAL_PGC_COMMIT | $REMOTE_PGC_COMMIT | "
+  echo -e "|  9) [Telegram Bot]     |  $LOCAL_MOONRAKER_TELEGRAM_BOT_COMMIT | $REMOTE_MOONRAKER_TELEGRAM_BOT_COMMIT | "
   echo -e "|                        |------------------------------| "
-  echo -e "|  8) [System]           |  $DISPLAY_SYS_UPDATE   | "
-  quit_footer
+  echo -e "|  10) [System]          |  $DISPLAY_SYS_UPDATE   | "
+  back_footer
 }
 
 update_menu(){
@@ -49,10 +51,14 @@ update_menu(){
       7)
         do_action "update_dwc2" "update_ui";;
       8)
+        do_action "update_pgc_for_klipper" "update_ui";;
+      9)
+        do_action "update_MoonrakerTelegramBot" "update_ui";;
+      10)
         do_action "update_system" "update_ui";;
       a)
         do_action "update_all" "update_ui";;
-      Q|q)
+      B|b)
         clear; main_menu; break;;
       *)
         deny_action "update_ui";;

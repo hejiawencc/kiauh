@@ -39,6 +39,12 @@ update_all(){
     if [ "$KLIPPERSCREEN_UPDATE_AVAIL" = "true" ]; then
       echo -e "|  ${cyan}● KlipperScreen${default}                                      |"
     fi
+    if [ "$PGC_UPDATE_AVAIL" = "true" ]; then
+      echo -e "|  ${cyan}● PrettyGCode for Klipper${default}                            |"
+    fi
+    if [ "$MOONRAKER_TELEGRAM_BOT_UPDATE_AVAIL" = "true" ]; then
+      echo -e "|  ${cyan}● MoonrakerTelegramBot${default}                               |"
+    fi
     if [ "$SYS_UPDATE_AVAIL" = "true" ]; then
       echo -e "|  ${cyan}● System${default}                                             |"
     fi
@@ -260,6 +266,7 @@ update_mainsail(){
   bb4u "mainsail"
   status_msg "Updating Mainsail ..."
   mainsail_setup
+  match_nginx_configs
   symlink_webui_nginx_log "mainsail"
 }
 
@@ -267,6 +274,7 @@ update_fluidd(){
   bb4u "fluidd"
   status_msg "Updating Fluidd ..."
   fluidd_setup
+  match_nginx_configs
   symlink_webui_nginx_log "fluidd"
 }
 
@@ -303,9 +311,27 @@ update_klipperscreen(){
   start_klipperscreen
 }
 
+update_pgc_for_klipper(){
+  PGC_DIR="${HOME}/pgcode"
+  status_msg "Updating PrettyGCode for Klipper ..."
+  cd $PGC_DIR && git pull
+  ok_msg "Update complete!"
+}
+
+update_MoonrakerTelegramBot(){
+  source_kiauh_ini
+  export klipper_cfg_loc
+  stop_MoonrakerTelegramBot
+  cd $MOONRAKER_TELEGRAM_BOT_DIR
+  git pull
+  ./scripts/install.sh
+  ok_msg "Update complete!"
+  start_MoonrakerTelegramBot
+}
+
 update_system(){
   status_msg "Updating System ..."
-  sudo apt-get update && sudo apt-get upgrade -y
+  sudo apt-get update --allow-releaseinfo-change && sudo apt-get upgrade -y
   ok_msg "Update complete! Check the log above!"
   ok_msg "KIAUH won't do any dist-upgrades!\n"
 }

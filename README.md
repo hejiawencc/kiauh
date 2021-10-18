@@ -75,7 +75,7 @@ For more information or instructions to the various components KIAUH can install
 
 ### **⛵Klipper** by [KevinOConnor](https://github.com/KevinOConnor) :
 
-https://github.com/KevinOConnor/klipper
+https://github.com/Klipper3d/klipper
 
 ---
 
@@ -126,6 +126,18 @@ https://github.com/jordanruthe/KlipperScreen
 
 https://octoprint.org \
 https://github.com/OctoPrint/OctoPrint
+
+---
+
+### **🔬PrettyGCode for Klipper** by [Kragrathea](https://github.com/Kragrathea) :
+
+https://github.com/Kragrathea/pgcode
+
+---
+
+### **🤖Telegram Bot for Moonraker** by [nlef](https://github.com/nlef) :
+
+https://github.com/nlef/moonraker-telegram-bot
 
 ---
 

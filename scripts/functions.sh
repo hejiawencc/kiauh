@@ -209,6 +209,21 @@ restart_klipperscreen(){
   sudo systemctl restart KlipperScreen && ok_msg "KlipperScreen Service restarted!"
 }
 
+start_MoonrakerTelegramBot(){
+  status_msg "Starting MoonrakerTelegramBot Service ..."
+  sudo systemctl start moonraker-telegram-bot && ok_msg "MoonrakerTelegramBot Service started!"
+}
+
+stop_MoonrakerTelegramBot(){
+  status_msg "Stopping MoonrakerTelegramBot Service ..."
+  sudo systemctl stop moonraker-telegram-bot && ok_msg "MoonrakerTelegramBot Service stopped!"
+}
+
+restart_MoonrakerTelegramBot(){
+  status_msg "Restarting MoonrakerTelegramBot Service ..."
+  sudo systemctl restart moonraker-telegram-bot && ok_msg "MoonrakerTelegramBot Service restarted!"
+}
+
 restart_nginx(){
   if [ "$(systemctl list-units --full -all -t service --no-legend | grep -F "nginx.service")" ]; then
     status_msg "Restarting NGINX Service ..."
@@ -234,7 +249,7 @@ dependency_check(){
       echo -e "${cyan}● $element ${default}"
     done
     echo
-    sudo apt-get update && sudo apt-get install ${inst[@]} -y
+    sudo apt-get update --allow-releaseinfo-change && sudo apt-get install ${inst[@]} -y
     ok_msg "Dependencies installed!"
     #clearing the array
     unset inst
@@ -442,4 +457,5 @@ init_ini(){
   if [ ! $(grep -E "^klipper_cfg_loc=" $INI_FILE) ]; then
     echo -e "\nklipper_cfg_loc=\c" >> $INI_FILE
   fi
+  fetch_webui_ports
 }

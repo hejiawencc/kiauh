@@ -13,12 +13,12 @@ advanced_ui(){
   echo -e "|                           |  System:                  | "
   echo -e "|  Firmware:                |  8) [Change hostname]     | "
   echo -e "|  3) [Build only]          |                           | "
-  echo -e "|  4) [Build + Flash]       |  Extensions:              | "
-  echo -e "|  5) [Build + SD Flash]    |  9) [Shell Command]       | "
+  echo -e "|  4) [Flash only]          |  Extensions:              | "
+  echo -e "|  5) [Build + Flash]       |  9) [Shell Command]       | "
   echo -e "|  6) [Get MCU ID]          |                           | "
   echo -e "|                           |  CustomPiOS:              | "
   echo -e "|                           |  10) [Migration Helper]   | "
-quit_footer
+back_footer
 }
 
 advanced_menu(){
@@ -41,25 +41,16 @@ advanced_menu(){
       3)
         do_action "build_fw" "advanced_ui";;
       4)
-        clear && print_header
-        flash_routine
-        if [ $FLASH_FIRMWARE = "true" ]; then
-          status_msg "Please wait..." && sleep 3 && build_fw
-          select_mcu_id
-        fi
-        print_msg && clear_msg
-        advanced_ui;;
+        do_action "select_flash_method" "advanced_ui";;
       5)
         clear && print_header
-        flash_routine_sd
-        if [ $FLASH_FW_SD = "true" ]; then
-          status_msg "Please wait..." && sleep 3 && build_fw
-          select_mcu_id
-        fi
+        status_msg "Please wait..."
+        build_fw
+        select_flash_method
         print_msg && clear_msg
         advanced_ui;;
       6)
-        do_action "get_mcu_id" "advanced_ui";;
+        do_action "select_mcu_connection" "advanced_ui";;
       7)
         do_action "ms_theme_menu";;
       8)
@@ -72,7 +63,7 @@ advanced_menu(){
         do_action "setup_gcode_shell_command" "advanced_ui";;
       10)
         do_action "migration_menu";;
-      Q|q)
+      B|b)
         clear; main_menu; break;;
       *)
         deny_action "advanced_ui";;
@@ -99,7 +90,7 @@ switch_ui(){
   echo -e "|  dmbutyugin:                                          | "
   echo -e "|  2) [--> scurve-shaping]                              | "
   echo -e "|  3) [--> scurve-smoothing]                            | "
-  quit_footer
+  back_footer
 }
 
 switch_menu(){
@@ -137,7 +128,7 @@ switch_menu(){
           read_branch
           print_msg && clear_msg
           switch_ui;;
-        Q|q)
+        B|b)
           clear; advanced_menu; break;;
         *)
           deny_action "switch_ui";;
@@ -146,28 +137,6 @@ switch_menu(){
   else
     ERROR_MSG="No Klipper directory found! Download Klipper first!"
   fi
-}
-
-#############################################################
-#############################################################
-
-rollback_ui(){
-  top_border
-  echo -e "|     $(title_msg "~~~~~~~~~~~~~ [ Rollback Menu ] ~~~~~~~~~~~~~")     | "
-  hr
-  echo -e "|  If serious errors occured after updating Klipper,    | "
-  echo -e "|  you can use this menu to return to the previously    | "
-  echo -e "|  used commit from which you have updated.             | "
-  bottom_border
-  top_border
-  echo -e "|  Active branch: ${green}$PRINT_BRANCH${default}                      | "
-  hr
-  echo -e "|  Currently on commit:                                 | "
-  echo -e "|  $CURR_UI                             | "
-  hr
-  echo -e "|  Commit last updated from:                            | "
-  echo -e "|  $PREV_UI                             | "
-  quit_footer
 }
 
 #############################################################
@@ -190,7 +159,7 @@ migration_ui(){
   echo -e "|  1) [Migrate MainsailOS]                              | "
   echo -e "|  2) [Migrate FluiddPi]                                | "
   echo -e "|                                                       | "
-  quit_footer
+  back_footer
 }
 
 migration_menu(){
@@ -201,7 +170,7 @@ migration_menu(){
     case "$action" in
       1) migrate_custompios "mainsail"; migration_menu;;
       2) migrate_custompios "fluiddpi"; migration_menu;;
-      Q|q) clear; advanced_menu; break;;
+      B|b) clear; advanced_menu; break;;
       *) print_unkown_cmd; migration_menu;;
     esac
   done

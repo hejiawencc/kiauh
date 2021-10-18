@@ -12,11 +12,12 @@ install_ui(){
   echo -e "|  Klipper API:             |  Other:                   | "
   echo -e "|  2) [Moonraker]           |  6) [Duet Web Control]    | "
   echo -e "|                           |  7) [OctoPrint]           | "
-  echo -e "|  Klipper Webinterface:    |                           | "
-  echo -e "|  3) [Mainsail]            |  Webcam:                  | "
-  echo -e "|  4) [Fluidd]              |  8) [MJPG-Streamer]       | "
-  echo -e "|                           |                           | "
-  quit_footer
+  echo -e "|  Klipper Webinterface:    |  8) [PrettyGCode]         | "
+  echo -e "|  3) [Mainsail]            |  9) [Telegram Bot]        | "
+  echo -e "|  4) [Fluidd]              |                           | "
+  echo -e "|                           |  Webcam:                  | "
+  echo -e "|                           |  10) [MJPG-Streamer]      | "
+  back_footer
 }
 
 install_menu(){
@@ -39,8 +40,12 @@ install_menu(){
       7)
         do_action "octoprint_setup_dialog" "install_ui";;
       8)
+        do_action "install_pgc_for_klipper" "install_ui";;
+      9)
+        do_action "install_MoonrakerTelegramBot" "install_ui";;
+      10)
         do_action "install_mjpg-streamer" "install_ui";;
-      Q|q)
+      B|b)
         clear; main_menu; break;;
       *)
         deny_action "install_ui";;

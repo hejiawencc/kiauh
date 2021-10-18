@@ -240,6 +240,9 @@ remove_dwc2(){
     rm -rf $DWC2_DIR && ok_msg "Directory removed!"
   fi
 
+  ### remove dwc2_port from ~/.kiauh.ini
+  sed -i "/^dwc2_port=/d" $INI_FILE
+
   CONFIRM_MSG=" DWC2-for-Klipper-Socket was successfully removed!"
 }
 
@@ -273,6 +276,9 @@ remove_mainsail(){
     rm -f $log
   done
 
+  ### remove mainsail_port from ~/.kiauh.ini
+  sed -i "/^mainsail_port=/d" $INI_FILE
+
   CONFIRM_MSG="Mainsail successfully removed!"
 }
 
@@ -302,6 +308,9 @@ remove_fluidd(){
   for log in $(find ${HOME}/klipper_logs -name "fluidd*"); do
     rm -f $log
   done
+
+  ### remove fluidd_port from ~/.kiauh.ini
+  sed -i "/^fluidd_port=/d" $INI_FILE
 
   CONFIRM_MSG="Fluidd successfully removed!"
 }
@@ -344,6 +353,9 @@ remove_octoprint(){
       status_msg "Removing $folder ..." && rm -rf $folder && ok_msg "Done!"
     done
   fi
+
+  ### remove octoprint_port from ~/.kiauh.ini
+  sed -i "/^octoprint_port=/d" $INI_FILE
 
   CONFIRM_MSG=" OctoPrint successfully removed!"
 }
@@ -410,6 +422,49 @@ remove_klipperscreen(){
   CONFIRM_MSG="KlipperScreen successfully removed!"
 }
 
+remove_MoonrakerTelegramBot(){
+  source_kiauh_ini
+
+  ### remove MoonrakerTelegramBot dir
+  if [ -d $MOONRAKER_TELEGRAM_BOT_DIR ]; then
+    status_msg "Removing MoonrakerTelegramBot directory ..."
+    rm -rf $MOONRAKER_TELEGRAM_BOT_DIR && ok_msg "Directory removed!"
+  fi
+
+  ### remove MoonrakerTelegramBot VENV dir
+  if [ -d $MOONRAKER_TELEGRAM_BOT_ENV_DIR ]; then
+    status_msg "Removing MoonrakerTelegramBot VENV directory ..."
+    rm -rf $MOONRAKER_TELEGRAM_BOT_ENV_DIR && ok_msg "Directory removed!"
+  fi
+
+  ### remove MoonrakerTelegramBot service
+  if [ -e /etc/systemd/system/moonraker-telegram-bot.service ]; then
+    status_msg "Removing MoonrakerTelegramBot service ..."
+    sudo systemctl stop moonraker-telegram-bot
+    sudo systemctl disable moonraker-telegram-bot
+    sudo rm -f $SYSTEMDDIR/moonraker-telegram-bot.service
+    ###reloading units
+    sudo systemctl daemon-reload
+    sudo systemctl reset-failed
+    ok_msg "MoonrakerTelegramBot Service removed!"
+  fi
+
+  ### remove MoonrakerTelegramBot log
+  if [ -e /tmp/telegram.log ] || [ -e ${HOME}/klipper_logs/telegram.log ]; then
+    status_msg "Removing MoonrakerTelegramBot log file ..."
+    rm -f "/tmp/telegram.log" "${HOME}/klipper_logs/telegram.log"  && ok_msg "File removed!"
+  fi
+
+  ### remove MoonrakerTelegramBot log symlink in config dir
+
+  if [ -e $klipper_cfg_loc/telegram.log ]; then
+    status_msg "Removing MoonrakerTelegramBot log symlink ..."
+    rm -f $klipper_cfg_loc/telegram.log && ok_msg "File removed!"
+  fi
+
+  CONFIRM_MSG="MoonrakerTelegramBot successfully removed!"
+}
+
 remove_mjpg-streamer(){
   ### remove MJPG-Streamer service
   if [ -e $SYSTEMDDIR/webcamd.service ]; then
@@ -439,4 +494,19 @@ remove_mjpg-streamer(){
   [ -L "${HOME}/klipper_logs/webcamd.log" ] && rm -f "${HOME}/klipper_logs/webcamd.log"
 
   CONFIRM_MSG="MJPG-Streamer successfully removed!"
+}
+
+remove_prettygcode(){
+  pgconf="/etc/nginx/sites-available/pgcode.local.conf"
+  pgconfsl="/etc/nginx/sites-enabled/pgcode.local.conf"
+  if [ -d ${HOME}/pgcode ] || [ -f $pgconf ] || [ -L $pgconfsl ]; then
+    status_msg "Removing PrettyGCode for Klipper ..."
+    rm -rf ${HOME}/pgcode
+    sudo rm -f $pgconf
+    sudo rm -f $pgconfsl
+    sudo systemctl restart nginx
+    CONFIRM_MSG="PrettyGCode for Klipper successfully removed!"
+  else
+    ERROR_MSG="PrettyGCode for Klipper not found!\n Skipping..."
+  fi
 }

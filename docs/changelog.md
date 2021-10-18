@@ -2,6 +2,19 @@
 
 This document covers possible important changes to KIAUH.
 
+### 2021-09-28
+* New Feature! Added an installer for the Telegram Bot for Moonraker by [nlef](https://github.com/nlef).
+Checkout his project! Remember to report all issues and/or bugs regarding that project in its corresponding repo and not here 😛.\
+You can find it here: https://github.com/nlef/moonraker-telegram-bot
+
+### 2021-09-24
+* The flashing function got adjusted a bit. It is now possible to also flash controllers which are connected over UART and thus accessible via `/dev/ttyAMA0`. You now have to select a connection methop prior flashing which is either USB or UART.
+* Due to several requests over time I have now created a Ko-fi account for those who want to support this project and my work with a small donation. Many thanks in advance to all future donors. You can support me on Ko-fi with this link: https://ko-fi.com/th33xitus
+* As usual, if you find any bugs or issues please report them. I tested the little rework i did with the hardware i have available and haven't encountered any malfunctions of flashing them yet.
+
+### 2021-08-10
+* KIAUH now supports the installation of the "PrettyGCode for Klipper" GCode-Viewer created by [Kragrathea](https://github.com/Kragrathea)! Installation, updating and removal are possible with KIAUH. For more details to this cool piece of software, please have a look here: https://github.com/Kragrathea/pgcode
+
 ### 2021-07-10
 * The NGINX configuration files got updated to be in sync with MainsailOS and FluiddPi. Issues with the NGINX service not starting up due to wrong configuration should be resolved now. To get the updated configuration files, please remove Moonraker and Mainsail / Fluidd with KIAUH first and then re-install it. An automated file check for those configuration files might follow in the future which then automates updating those files if there were important changes.
 
