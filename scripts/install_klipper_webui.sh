@@ -1,13 +1,16 @@
+MAINSAIL_REPO_API="https://api.github.com/repos/mainsail-crew/mainsail/releases"
+FLUIDD_REPO_API="https://api.github.com/repos/fluidd-core/fluidd/releases"
+
 system_check_webui(){
   ### check system for installed moonraker service
-  if [ "$(systemctl list-units --full -all -t service --no-legend | grep -F "moonraker.service")" ] || [ "$(systemctl list-units --full -all -t service --no-legend | grep -E "moonraker-[[:digit:]].service")" ]; then
+  if ls /etc/systemd/system/moonraker.service 2>/dev/null 1>&2 || ls /etc/systemd/system | grep -q -E "moonraker-[[:digit:]]+.service"; then
     moonraker_chk_ok="true"
   else
     moonraker_chk_ok="false"
   fi
 
   ### check system for an installed and enabled octoprint service
-  if systemctl list-unit-files | grep -E "octoprint.*" | grep "enabled" &>/dev/null; then
+  if sudo systemctl list-unit-files | grep -E "octoprint.*" | grep "enabled" &>/dev/null; then
     OCTOPRINT_ENABLED="true"
   fi
 
@@ -114,12 +117,12 @@ install_webui(){
   $1_port_check
 
   ### ask user to install mjpg-streamer
-  if [[ ! "$(systemctl list-units --full -all -t service --no-legend | grep -F "webcamd.service")" ]]; then
+  if ls /etc/systemd/system/webcamd.service 2>/dev/null 1>&2; then
     get_user_selection_mjpg-streamer
   fi
 
   ### ask user to install the recommended webinterface macros
-  if [[ ! -n $(ls $klipper_cfg_loc/kiauh_macros.cfg) ]] || [[ ! -n $(ls $klipper_cfg_loc/printer_*/kiauh_macros.cfg) ]]; then
+  if ! ls $klipper_cfg_loc/kiauh_macros.cfg 2>/dev/null 1>&2 || ! ls $klipper_cfg_loc/printer_*/kiauh_macros.cfg 2>/dev/null 1>&2; then
     get_user_selection_kiauh_macros "$IF_NAME2"
   fi
   ### create /etc/nginx/conf.d/upstreams.conf
@@ -303,16 +306,16 @@ select_fluidd_port(){
 }
 
 get_mainsail_ver(){
-  MAINSAIL_VERSION=$(curl -s https://api.github.com/repositories/240875926/releases | grep tag_name | cut -d'"' -f4 | head -1)
+  MAINSAIL_VERSION=$(curl -s $MAINSAIL_REPO_API | grep tag_name | cut -d'"' -f4 | head -1)
 }
 
 get_fluidd_ver(){
-  FLUIDD_VERSION=$(curl -s https://api.github.com/repositories/295836951/releases | grep tag_name | cut -d'"' -f4 | head -1)
+  FLUIDD_VERSION=$(curl -s $FLUIDD_REPO_API | grep tag_name | cut -d'"' -f4 | head -1)
 }
 
 mainsail_setup(){
   ### get mainsail download url
-  MAINSAIL_DL_URL=$(curl -s https://api.github.com/repositories/240875926/releases | grep browser_download_url | cut -d'"' -f4 | head -1)
+  MAINSAIL_DL_URL=$(curl -s $MAINSAIL_REPO_API | grep browser_download_url | cut -d'"' -f4 | head -1)
 
   ### remove existing and create fresh mainsail folder, then download mainsail
   [ -d $MAINSAIL_DIR ] && rm -rf $MAINSAIL_DIR
@@ -341,7 +344,7 @@ enable_mainsail_remotemode(){
 
 fluidd_setup(){
   ### get fluidd download url
-  FLUIDD_DL_URL=$(curl -s https://api.github.com/repositories/295836951/releases/latest | grep browser_download_url | cut -d'"' -f4)
+  FLUIDD_DL_URL=$(curl -s $FLUIDD_REPO_API | grep browser_download_url | cut -d'"' -f4 | head -1)
 
   ### remove existing and create fresh fluidd folder, then download fluidd
   [ -d $FLUIDD_DIR ] && rm -rf $FLUIDD_DIR
